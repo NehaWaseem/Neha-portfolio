@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ThemeToggle from "@/components/ThemeToggle"; // <-- added
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -9,11 +9,9 @@ const Navigation = () => {
   const [active, setActive] = useState<string>("#about");
   const observerRef = useRef<IntersectionObserver | null>(null);
 
+  // Detect scroll to toggle background
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -24,10 +22,11 @@ const Navigation = () => {
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
     { href: "#achievements", label: "Achievements" },
-    { href: "#education", label: "Education" }, // <-- added
+    { href: "#education", label: "Education" },
     { href: "#contact", label: "Contact" },
   ];
 
+  // Active link tracking
   useEffect(() => {
     if (typeof window === "undefined" || typeof document === "undefined") return;
 
@@ -35,26 +34,20 @@ const Navigation = () => {
       .map((l) => document.querySelector(l.href))
       .filter(Boolean) as Element[];
 
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
+    if (observerRef.current) observerRef.current.disconnect();
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        // pick the most visible section
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) {
-          setActive(`#${visible.target.id}`);
-        }
+        if (visible) setActive(`#${visible.target.id}`);
       },
       { root: null, rootMargin: "-30% 0px -40% 0px", threshold: [0.1, 0.25, 0.5] }
     );
 
-    sections.forEach((s) => observerRef.current && observerRef.current.observe(s));
-    return () => observerRef.current && observerRef.current.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    sections.forEach((s) => observerRef.current?.observe(s));
+    return () => observerRef.current?.disconnect();
   }, []);
 
   const handleNavClick = (href: string) => (e?: React.MouseEvent) => {
@@ -67,20 +60,19 @@ const Navigation = () => {
     }
   };
 
-  // deeper/darker lavender active styling
   const activeClasses =
     "scale-105 shadow-2xl text-white transform transition duration-150 bg-gradient-to-br from-[#4b2f97] to-[#6B4BCF]";
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 w-full z-50 transition-all duration-300 backdrop-blur-md ${
         isScrolled
-          ? // darker solid/nav gradient when scrolled
-            "bg-gradient-to-b from-[#05030b]/95 via-[#0b0712]/90 to-[#0a0610]/95 backdrop-blur-md shadow-soft border-b border-[#2a2138]/30"
+          ? // When scrolled — adjust for theme automatically
+            "bg-white/80 dark:bg-gradient-to-b dark:from-[#05030b]/95 dark:via-[#0b0712]/90 dark:to-[#0a0610]/95 border-b border-border shadow-sm"
           : "bg-transparent"
       }`}
     >
-      <div className="container max-w-6xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <a
@@ -100,27 +92,24 @@ const Navigation = () => {
                   key={link.href}
                   href={link.href}
                   onClick={handleNavClick(link.href)}
-                  role="tab"
-                  aria-selected={isActive}
                   className={
-                    "px-3 py-2 rounded-md text-foreground transition-transform transform duration-150 font-medium " +
+                    "px-3 py-2 rounded-md font-medium text-[clamp(0.9rem,0.3vw+0.8rem,1rem)] transition-transform duration-150 " +
                     (isActive
                       ? activeClasses
-                      : "hover:scale-102 hover:shadow-sm hover:text-[#8C6FEF] hover:bg-[#F6F3FF]/30")
+                      : "text-foreground hover:text-[#6B4BCF] hover:bg-[#EDE9FF]/60 dark:hover:text-[#BFAAFF] dark:hover:bg-[#201733]/60")
                   }
                 >
                   {link.label}
                 </a>
               );
             })}
-
-            {/* Theme toggle on desktop */}
+            {/* Theme toggle */}
             <div className="ml-2">
               <ThemeToggle />
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"
@@ -135,9 +124,11 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div id="mobile-menu" className="md:hidden py-4 border-t border-border">
+          <div
+            id="mobile-menu"
+            className="md:hidden py-4 border-t border-border bg-white/95 dark:bg-[#0a0610]/95 backdrop-blur-md rounded-b-lg"
+          >
             <div className="flex items-center justify-between px-3 mb-2">
-              {/* keep a compact toggle in the mobile header */}
               <div />
               <div>
                 <ThemeToggle />
@@ -151,13 +142,11 @@ const Navigation = () => {
                     key={link.href}
                     href={link.href}
                     onClick={handleNavClick(link.href)}
-                    role="tab"
-                    aria-selected={isActive}
                     className={
-                      "text-foreground transition-smooth font-medium py-2 px-3 rounded-md " +
+                      "text-foreground font-medium py-2 px-3 rounded-md transition-colors " +
                       (isActive
                         ? activeClasses
-                        : "hover:text-[#8C6FEF] hover:bg-[#F6F3FF]/30")
+                        : "hover:text-[#6B4BCF] hover:bg-[#EDE9FF]/60 dark:hover:text-[#BFAAFF] dark:hover:bg-[#201733]/60")
                     }
                   >
                     {link.label}
