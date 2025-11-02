@@ -29,7 +29,7 @@ const Contact = () => {
                   <Mail className="w-5 h-5 text-accent group-hover:text-background" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground group-hover:text-background/80">Email</p>
+                  <p className="text-sm text-muted-foreground group-hover:text-background/80 font-semibold text-black dark:text-white">Email</p>
                   <p className="font-medium">nehawaseem846@gmail.com</p>
                 </div>
               </a>
@@ -42,7 +42,7 @@ const Contact = () => {
                   <Phone className="w-5 h-5 text-accent group-hover:text-background" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground group-hover:text-background/80">Phone</p>
+                  <p className="text-sm text-muted-foreground group-hover:text-background/80 font-semibold text-black dark:text-white">Phone</p>
                   <p className="font-medium">+92 323 480 7000</p>
                 </div>
               </a>
