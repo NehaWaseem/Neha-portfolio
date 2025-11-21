@@ -35,6 +35,8 @@ const Projects = () => {
         "Join groups and share photos automatically",
         "Download pictures from shared albums",
         "Create private albums and share with selected people",
+        "localization support for multiple languages",
+        "AI-powered photo organization and management",
       ],
       link: "https://www.figma.com/design/aK99upSkvUZpPZpqIH1J6z/SnapVault?node-id=0-1&p=f&t=dlSXI85GS7ym4nSb-0" // 🔗 Placeholder
     },
